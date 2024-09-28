@@ -1,0 +1,107 @@
+.body{
+    background-color: rgb(232, 231, 231);
+    padding-top: 50px;
+    padding-bottom: 50px;
+    box-sizing: border-box;
+    height: 100vh;
+}
+
+.login-container {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    margin: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    box-sizing: border-box;
+    min-height: 500px;
+    width: 400px;
+    border-radius: 12px;
+    padding: 0 40px 0 40px;
+    flex-shrink: 0;
+}
+
+.title {
+    font-family: sans-serif;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.description {
+    margin: 3px 0 30px 0;
+    font-family: sans-serif;
+}
+
+.form-container {
+    width: 100%;
+}
+
+.label {
+    font-weight: bold;
+    font-size: 14px;
+    font-family: sans-serif;
+}
+
+.input-one {
+    width: 100%;
+    height: 36px;
+    border: 1px solid rgba(128, 128, 128, 0.711);
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding-left: 8px;
+    margin-top: 2px;
+    margin-bottom: 16px;
+}
+
+.forgot-label {
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.forgot-label:hover{
+    text-decoration: underline;
+}
+
+.submit-button{
+    margin-top: 16px;
+    width: 100%;
+    height: 36px;
+    background-color: rgb(66, 66, 255);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-family: sans-serif;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.submit-button:hover{
+    background-color: rgb(24, 3, 253);
+}
+
+.bottom-text {
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+}
+
+.error-message {
+    color: white;
+  font-family: sans-serif;
+  font-size: 12px;
+  height: 35px;
+  width: 100%;
+  border: 2px solid red;
+  text-align: left;
+  box-sizing: border-box;
+  padding-left: 5px;
+  border-radius: 6px;
+  background-color: rgb(255, 107, 107);
+  padding-top: 10px;
+  margin-bottom: 0;
+}
