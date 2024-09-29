@@ -1,4 +1,4 @@
-import { useRecoilState } from "recoil";
+import { useRecoilState} from "recoil";
 import { errorState, inputValueState } from "./formAtom";
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,7 @@ export default function useFormHandlers (){
       };
     
       const handleSubmit = (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
     
         if (!inputValue) {
           setError("Input is required");

@@ -41,3 +41,13 @@ export const loginState = atom({
   key:'loginState',
   default: false
 })
+
+export const documentTitleSate = atom({
+  key: 'documentTitleSate',
+  default: ''
+})
+
+export const documentIdState = atom({
+  key: 'documentIdState',
+  default: ''
+})

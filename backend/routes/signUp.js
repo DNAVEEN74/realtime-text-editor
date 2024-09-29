@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const createToken = (userId) => {
     const secretKey = process.env.SECRET_KEY
-    return jwt.sign({ id: userId }, secretKey, { expiresIn: '1h' });
+    return jwt.sign({ id: userId }, secretKey, { expiresIn: '7d' });
   };
 
 router.post('/', async (req, res) => {

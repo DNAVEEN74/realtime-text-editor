@@ -8,10 +8,8 @@ import { useNavigate } from "react-router-dom";
 export default function useLoginHandler (){
     const [userLoginInfo, setUserLoginInfo] = useRecoilState(userLoginState);
     const [userSignUpInfo, setUserSignUpInfo]= useRecoilState(UserSignUpState);
-    const [fetchParams, setFetchParams] = useRecoilState(fetchParamsState);
     const setError = useSetRecoilState(errorState);
     const signUpValue = useRecoilValue(signUpState);
-    const setToken = useSetRecoilState(tokenState);
     const navigate = useNavigate();
     const setLoginSate = useSetRecoilState(loginState);
 

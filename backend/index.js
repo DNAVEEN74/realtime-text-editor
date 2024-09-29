@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 const loginRoute = require('./routes/login');
 const signUpRoute = require('./routes/signUp');
-const refreshToken = require('./middlewares/refreshToken');
+const verifyToken = require('./middlewares/verifyToken');
 const connectDB = require('./db/dbConnect');
 
 app.use(cors());
@@ -13,7 +13,7 @@ connectDB();
 
 app.use('/login', loginRoute);
 app.use('/signUp', signUpRoute);
-app.use('/refresh-token', refreshToken);
+app.use('/verify-token', verifyToken);
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
