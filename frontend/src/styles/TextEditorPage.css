@@ -29,10 +29,10 @@ body {
     background-color: #2b00ff;
 }
 
-.share-button {
+.collaborate-button {
     display: block;
     position: relative;
-    width: 70px;
+    width: 100px;
     height: 35px;
     box-sizing: border-box;
     border-radius: 8px;
@@ -44,7 +44,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.share-button:hover {
+.collaborate-button:hover {
     background-color: #59d12e;
 }
 

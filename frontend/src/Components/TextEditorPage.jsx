@@ -1,13 +1,16 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import '../styles/TextEditorPage.css'
 import '../styles/Sidebar.css'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css';
+// import { useRecoilValue, useSetRecoilState } from 'recoil';
+// import { socketState, socketStateSelector } from '../atoms and hooks/formAtom';
 
 export default function TextEditor () {
     const quillRef = useRef(null)
     const [content, setContent] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [socket, setSocket] = useState(null);
 
     const modules = {
         toolbar: [
@@ -28,9 +31,30 @@ export default function TextEditor () {
         },
       };
 
+      useEffect(() => {
+        const newSocket = new WebSocket('ws://localhost:3000');
+        setSocket(newSocket);
+
+        newSocket.onopen = () => {
+          console.log('Connection established');
+        }
+
+        newSocket.onmessage = (message) => {
+          const delta = JSON.parse(message.data);
+          const quill = quillRef.current.getEditor();
+
+          quill.updateContents(delta);
+        }
+
+        return () => {
+            newSocket.close()
+            setSocket(null);
+        };
+      }, [])
+
       const handleChange = (content, delta, source, editor)=>{
-        if(source === 'user'){
-            ws.send(JSON.stringify(delta));
+        if(source === 'user' && socket && socket.readyState === WebSocket.OPEN){
+            socket.send(JSON.stringify(delta));
         }
       };
 
