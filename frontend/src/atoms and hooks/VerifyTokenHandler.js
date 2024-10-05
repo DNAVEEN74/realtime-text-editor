@@ -30,6 +30,7 @@ export default function useTokenCheck() {
           localStorage.setItem('token', token);
           setLogin(true);
         }
+
       } catch (error) {
         console.error("Error verifying token", error);
         setLogin(false);
@@ -37,5 +38,9 @@ export default function useTokenCheck() {
     };
 
     askNewTokenForLogin();
+
+    return () => {
+      console.log('verify token is un mounted')
+    }
   }, [setLogin]);
 }

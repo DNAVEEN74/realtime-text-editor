@@ -18,10 +18,11 @@ body {
     text-align: center;
     background-color: #3A72B9;
     color: white;
-    padding: 8px;
     box-sizing: border-box;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 16px;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -35,9 +36,10 @@ body {
     width: 100px;
     height: 35px;
     box-sizing: border-box;
+    border: none;
     border-radius: 8px;
-    padding: 5px;
-    padding-top: 8px;
+    font-size: 16px;
+    cursor: pointer;
     text-align: center;
     background-color: #67b34e;
     color: white;
@@ -182,3 +184,20 @@ body {
     background-color: #c0c8d2;
 }
 
+.collab-container{
+    position: absolute;
+    top:55px;
+    right:5px;
+    width: 400px;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(251, 251, 251);
+    box-sizing: border-box;
+    text-align: center;
+    border: 1px solid rgb(75, 75, 75);
+    border-radius: 6px;
+    box-shadow: 5px 5px 10px rgb(101, 101, 101);
+    margin: 0;
+    padding-top: 0;
+    z-index: 2;
+}

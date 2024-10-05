@@ -17,14 +17,14 @@ export const fetchDataSelector = selectorFamily({
         if (!route || !body) return null;
 
         try {
-            const response = await axios.post(`http://localhost:3000/${route}`, body)
-            const data = await response.data;
+            const response = await axios.post(`http://localhost:3000/${route}`, body);
+            const data = response.data;
             console.log('API Response:', data);
-            
-            return data.token
-        }catch(error){
+
+            return { token: data.token };
+        } catch (error) {
             console.error("Error in API call:", error);
-            return null
+            return null;
         }
     }
-})
+});

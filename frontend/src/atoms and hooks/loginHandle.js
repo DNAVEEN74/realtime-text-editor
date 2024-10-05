@@ -60,7 +60,7 @@ export default function useLoginHandler (){
     const handleButtonClick = useRecoilCallback(({ snapshot, set }) => async (e) => {
         e.preventDefault();
         let result;
-    console.log('clicked')
+    
         if (signUpValue === false) {
             result = loginSchema.safeParse(userLoginInfo);
             if (!result.success) {
@@ -84,12 +84,12 @@ export default function useLoginHandler (){
         }
     
         const fetchParams = await snapshot.getPromise(fetchParamsState);
-        const tokenString = await snapshot.getPromise(fetchDataSelector(fetchParams));
+        const response = await snapshot.getPromise(fetchDataSelector(fetchParams));
     
-        if (tokenString) {
-            set(tokenState, tokenString);
-            localStorage.setItem('token', tokenString);
-            console.log(tokenString);
+        if (response.token) {
+            set(tokenState, response.token);
+            localStorage.setItem('token', response.token);
+            console.log('Token and User ID:', response.token, response.userId);
             navigate('/');
             setLoginSate(true);
         }

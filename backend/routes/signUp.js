@@ -9,13 +9,13 @@ const createToken = (userId) => {
     return jwt.sign({ id: userId }, secretKey, { expiresIn: '7d' });
   };
 
-router.post('/', async (req, res) => {
+  router.post('/', async (req, res) => {
     const { fullName, email, password } = req.body;
 
     try {
-        const existingUser = await User.findOne({email});
-        if(existingUser){
-            res.status(400).json({error: "User with this email already exists"});
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: "User with this email already exists" });
         }
 
         const newUser = new User({ fullName, email, password });
@@ -23,12 +23,16 @@ router.post('/', async (req, res) => {
 
         const token = createToken(newUser._id);
 
-        res.status(201).json({ message: 'User created successfully', token });
-
-    }catch (error){
+        res.status(201).json({ 
+            message: 'User created successfully', 
+            token,
+            userId: newUser._id
+        });
+    } catch (error) {
         console.error('Signup error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
     }
-})
+});
+
 
 module.exports = router;

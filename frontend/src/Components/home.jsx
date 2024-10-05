@@ -5,7 +5,7 @@ import NewDocumentOpener from "./newDoc";
 import { useNavigate } from "react-router-dom";
 import useFormHandlers from "../atoms and hooks/formHandler";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { documentIdState, loginState } from "../atoms and hooks/formAtom";
+import { givenIdState, loginState } from "../atoms and hooks/formAtom";
 import useTokenCheck from "../atoms and hooks/VerifyTokenHandler";
 
 export default function HomePage() {
@@ -13,13 +13,9 @@ export default function HomePage() {
   const [newDoc, setNewDoc] = useState(false);
   const login = useRecoilValue(loginState);
   const { inputValue, error, handleInputChange, handleSubmit } = useFormHandlers();
-  const setDocumentId = useSetRecoilState(documentIdState);
+  const setGivenDocId = useSetRecoilState(givenIdState);
 
   useTokenCheck();
-
-  const handleNewDocOpener = () => {
-    setNewDoc(true);
-  };
 
   return (
     <div className="main-container">
@@ -55,16 +51,18 @@ export default function HomePage() {
                 <NewDocumentOpener />
               ) : (
                 <div className="form-container">
-                  <form className="form" onSubmit={() => {
-                    setDocumentId(inputValue);
-                    handleSubmit();
+                  <form className="form" onSubmit={(e) => {
+                    setGivenDocId(inputValue);
+                    handleSubmit(e, 'CheckId');
                   }} >
                     <input
                       className="form-input"
                       placeholder="Enter document ID"
                       type="text"
                       value={inputValue}
-                      onChange={handleInputChange}
+                      onChange={(e) => {
+                        handleInputChange(e, 'inputId')
+                      }}
                     />
                     <button type="submit" className="form-button" >
                       Join
@@ -73,7 +71,7 @@ export default function HomePage() {
                   {error && <p className="input-error">{error}</p>}
                   <p className="form-text">
                     Or{" "}
-                    <a className="form-link" onClick={handleNewDocOpener}>
+                    <a className="form-link" onClick={() => setNewDoc(true)}>
                       create a new document
                     </a>
                   </p>

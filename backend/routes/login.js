@@ -10,26 +10,31 @@ const createToken = (userId) => {
 };
 
 router.post('/', async (req, res) => {
-    const { email, password } = req.body;
-  
-    try {
-        const user = await User.findOne({ email });
+  const { email, password } = req.body;
+
+  try {
+      const user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ error: 'Invalid email or password' });
+          return res.status(400).json({ error: 'Invalid email or password' });
       }
+
       const isPasswordCorrect = await user.comparePassword(password);
       if (!isPasswordCorrect) {
-        return res.status(400).json({ error: 'Invalid email or password' });
+          return res.status(400).json({ error: 'Invalid email or password' });
       }
-  
+
       const token = createToken(user._id);
-  
-      res.status(200).json({ message: 'Login successful', token });
-    } catch (error) {
+
+      res.status(200).json({ 
+          message: 'Login successful', 
+          token,
+          userId: user._id
+      });
+  } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ error: 'Internal server error' });
-    }
-  });
+  }
+});
   
 
   module.exports = router;

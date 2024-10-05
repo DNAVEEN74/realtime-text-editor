@@ -1,4 +1,4 @@
-import { atom, selector } from 'recoil';
+import { atom } from 'recoil';
 
 export const inputValueState = atom({
   key: 'inputValueState',
@@ -42,12 +42,22 @@ export const loginState = atom({
   default: false
 })
 
-export const documentTitleSate = atom({
-  key: 'documentTitleSate',
+export const givenTitleSate = atom({
+  key: 'givenTitleSate',
   default: ''
+})
+
+export const givenIdState = atom({
+  key: 'givenIdState',
+  default: ''
+})
+
+export const generatedIdState = atom({
+  key: 'generatedIdState',
+  default:''
 })
 
 export const documentIdState = atom({
   key: 'documentIdState',
-  default: ''
+  default:''
 })
