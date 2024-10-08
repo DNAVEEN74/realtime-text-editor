@@ -33,8 +33,10 @@ wss.on('connection', async (ws, req) => {
       }
     });
   
-    ws.on('close', () => {
+    ws.on('close', async () => {
       console.log('client disconnected');
+      document.sessionId = '';
+      await document.save();
     });
   });
 }

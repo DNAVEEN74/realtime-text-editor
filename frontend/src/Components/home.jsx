@@ -1,12 +1,14 @@
-import { Edit3, Users, Zap, MessageCircle } from "lucide-react";
+import { Edit3, Users, Zap, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
 import "../styles/home.css";
 import { useState } from "react";
 import NewDocumentOpener from "./newDoc";
 import { useNavigate } from "react-router-dom";
 import useFormHandlers from "../atoms and hooks/formHandler";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { givenIdState, loginState } from "../atoms and hooks/formAtom";
+import { documentIdState, givenIdState, loginState } from "../atoms and hooks/formAtom";
 import useTokenCheck from "../atoms and hooks/VerifyTokenHandler";
+import usePrevProjects from "../atoms and hooks/prevProjectsHook";
+import axios from "axios";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -14,8 +16,30 @@ export default function HomePage() {
   const login = useRecoilValue(loginState);
   const { inputValue, error, handleInputChange, handleSubmit } = useFormHandlers();
   const setGivenDocId = useSetRecoilState(givenIdState);
+  const [showPrevProjects, setShowPrevProjects] = useState(false);
+  const [ projectsList, setProjectsList ] = useState([]);
+  const { fetchProjects } = usePrevProjects();
+  const setDocumentId = useSetRecoilState(documentIdState);
 
   useTokenCheck();
+
+  const handleProjectsHistory = async () => {
+    if (!showPrevProjects) {
+      const titles = await fetchProjects();
+      setProjectsList(titles);
+    }
+    setShowPrevProjects((prev) => !prev);
+  };
+
+  const handleProjectSelect = async ( selectedProjectTitle ) => {
+    const userId = localStorage.getItem('userId');
+
+    const response = await axios.get(`http://localhost:3000/projectsHistory?type=retrieveDocumentId&docTitle=${selectedProjectTitle}&userId=${userId}`);
+    const data = await response.data;
+
+    setDocumentId(data.documentId);
+    navigate('TextEditor');
+  }
 
   return (
     <div className="main-container">
@@ -25,6 +49,16 @@ export default function HomePage() {
           <span className="logo-text">CollabEdit</span>
         </a>
         <nav className="header-nav">
+        {login && (
+            <button onClick={handleProjectsHistory} className="Document-Button">
+              Select a Document
+              {showPrevProjects ? (
+                <ChevronUp className="arrow-icon" />
+              ) : (
+                <ChevronDown className="arrow-icon" />
+              )}
+            </button>
+          )}
           <a className="header-link" href="#">
             About
           </a>
@@ -36,6 +70,15 @@ export default function HomePage() {
         </button> }
         </nav>
       </header>
+      {showPrevProjects && (
+        <div className="dropdown-container appear-animation">
+          {projectsList.map((projectTitle, index) => (
+            <button key={index} className="dropdown-menu" onClick={() => handleProjectSelect(projectTitle)} >
+              {projectTitle}
+            </button>
+          ))}
+        </div>
+      )}
       <main className="main-content">
         <section className="section-one">
           <div className="container">

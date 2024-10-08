@@ -1,7 +1,7 @@
 import { useRecoilCallback, useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { errorState, loginState, signUpState, tokenState, userLoginState, UserSignUpState } from "./formAtom";
 import { loginSchema, signUpSchema } from "../zod/loginSchema";
-import { fetchDataSelector, fetchParamsState } from "./registerAtom";
+import { fetchDataSelector, fetchParamsState, userIdState } from "./registerAtom";
 import { useNavigate } from "react-router-dom";
 
 
@@ -88,7 +88,9 @@ export default function useLoginHandler (){
     
         if (response.token) {
             set(tokenState, response.token);
+            set(userIdState, response.userId);
             localStorage.setItem('token', response.token);
+            localStorage.setItem('userId', response.userId);
             console.log('Token and User ID:', response.token, response.userId);
             navigate('/');
             setLoginSate(true);

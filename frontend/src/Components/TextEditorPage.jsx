@@ -4,12 +4,12 @@ import "../styles/Sidebar.css";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
-import {
-    documentIdState,
-    generatedIdState,
-    loginState,
-} from "../atoms and hooks/formAtom";
+import { documentIdState, generatedIdState, loginState } from "../atoms and hooks/formAtom";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { saveAs } from 'file-saver';
+import { Save, Download, Users } from "lucide-react";
+import usePrevProjects from "../atoms and hooks/prevProjectsHook";
+import { useNavigate } from "react-router-dom";
 
 export default function TextEditor() {
     const quillRef = useRef(null);
@@ -19,8 +19,11 @@ export default function TextEditor() {
     const [collaborate, setCollaborate] = useState(false);
     const [generatedId, setGeneratedId] = useRecoilState(generatedIdState);
     const login = useRecoilValue(loginState);
-    const documentId = useRecoilValue(documentIdState);
+    const [documentId, setDocumentId] = useRecoilState(documentIdState);
     const [copied, setCopied] = useState(false);
+    const [documentsList, setDocumentsList] = useState([]);
+    const { fetchProjects } = usePrevProjects();
+    const navigate = useNavigate();
 
     const modules = {
         toolbar: [
@@ -45,9 +48,18 @@ export default function TextEditor() {
         },
     };
 
-    // Initialize the WebSocket connection only once for the current documentId
     useEffect(() => {
-        if (socket || !documentId) return; // Prevent multiple connections
+        const fetchDocumentsTitles = async () => {
+            const titles = await fetchProjects();
+            setDocumentsList(titles);
+        }
+
+        fetchDocumentsTitles();
+        
+    },[]);
+
+    useEffect(() => {
+        if (socket || !documentId) return;
 
         const newSocket = new WebSocket(
             `ws://localhost:3000?docId=${documentId}`
@@ -62,7 +74,6 @@ export default function TextEditor() {
             const data = JSON.parse(message.data);
             const quill = quillRef.current.getEditor();
 
-            // If initial content comes from the server, only set it if the current content is empty
             if (data.type === "initialContent") {
                 if (!quill.getContents().ops.length || !content.trim()) {
                     setContent(data.content);
@@ -82,7 +93,7 @@ export default function TextEditor() {
                 setSocket(null);
             }
         };
-    }, [documentId]); // The WebSocket only depends on documentId
+    }, [documentId]);
 
     const handleChange = (content, delta, source, editor) => {
         if (
@@ -91,12 +102,10 @@ export default function TextEditor() {
             socket.readyState === WebSocket.OPEN
         ) {
             socket.send(JSON.stringify(delta));
-            console.log(delta);
         }
-        setContent(content);  // Always keep the latest content in state
+        setContent(content);
     };
 
-    // Undo and Redo Handlers
     const handleUndo = () => {
         const editor = quillRef.current.getEditor();
         editor.history.undo();
@@ -107,7 +116,6 @@ export default function TextEditor() {
         editor.history.redo();
     };
 
-    // Collaborate button logic, don't reset content when collaborating
     const handleCollaborate = async () => {
         if (generatedId) {
             setCollaborate(true);
@@ -130,63 +138,92 @@ export default function TextEditor() {
         }
     };
 
+    const handleSave = async () => {
+
+        const response = await axios.put('http://localhost:3000/saveContent',{
+            docId: documentId,
+            newContent: content
+        })
+
+        const data = await response.data;
+        console.log(data.message);
+    }
+
     const handleDownload = async () => {
-        console.log("download");
+        try {
+            const response = await axios.post('http://localhost:3000/download-pdf', {
+                docId: documentId,
+                content: content
+            }, {
+                responseType: 'blob',
+            });
+
+            const data = response.data;
+
+            if(data.error === 'Document is not Saved or Something went wrong'){
+                alert('Document is not Saved or Something went wrong')
+            }else if (data.error === 'Document not found'){
+                alert('Document not found');
+            }
+    
+            const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+    
+            const contentDisposition = response.headers['content-disposition'];
+            const title = contentDisposition
+                ? contentDisposition.split('filename=')[1].replace(/"/g, '')
+                : 'document.pdf';
+    
+            saveAs(pdfBlob, title);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+        }
+    };
+    
+    const handleProjectSelect = async (selectedDocument) => {
+        const userId = localStorage.getItem('userId');
+
+        const response = await axios.get(`http://localhost:3000/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
+        const data = await response.data;
+
+        setDocumentId(data.documentId);
     };
 
     return (
         <div className="mainPage">
             <div className="Nav">
-                <div
-                    className="hamburger-menu"
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                >
-                    <div className="hamburger-icon">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-                <div className="nav-button">
-                    {login && (
-                        <button
-                            className="collaborate-button"
-                            onClick={handleCollaborate}
-                        >
-                            collaborate
-                        </button>
-                    )}
-                    <button
-                        className="Download-button"
-                        onClick={handleDownload}
-                    >
-                        download
-                    </button>
+            <div
+                className="hamburger-menu"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+                <div className="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
-            <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
-                <div className="sidebar-content">
-                    <h2>Menu</h2>
-                    <ul>
-                        <li>Option 1</li>
-                        <li>Option 2</li>
-                        <li>Option 3</li>
-                    </ul>
-                </div>
+            <div className="nav-button">
+                <button onClick={handleSave} className="Save-button">
+                    <Save className="button-icon" /> Save
+                </button>
+                {login && (
+                    <button
+                        className="collaborate-button"
+                        onClick={handleCollaborate}
+                    >
+                        <Users className="button-icon" /> Collaborate
+                    </button>
+                )}
+                <button
+                    className="Download-button"
+                    onClick={handleDownload}
+                >
+                    <Download className="button-icon" /> Download
+                </button>
             </div>
             {collaborate && (
                 <div className="collab-container">
-                    <h3
-                        style={{
-                            backgroundColor: "#95B9C7",
-                            marginTop: "0",
-                            marginBottom: "0",
-                            height: "40px",
-                            paddingTop: "10px",
-                            boxSizing: "border-box",
-                        }}
-                    >
-                        {generatedId || <p>loading...</p>}
+                    <h3 className="collab-header">
+                        {generatedId || <p>Loading...</p>}
                     </h3>
                     <button
                         onClick={() => {
@@ -194,23 +231,22 @@ export default function TextEditor() {
                             navigator.clipboard.writeText(generatedId);
                             setCollaborate(false);
                         }}
-                        style={{
-                            border: "none",
-                            color: "white",
-                            backgroundColor: "black",
-                            margin: "0",
-                            width: "100%",
-                            height: "25px",
-                        }}
+                        className="copy-button"
                     >
-                        {copied ? (
-                            <p style={{ margin: "0", padding: "0" }}>copied</p>
-                        ) : (
-                            <p style={{ margin: "0", padding: "0" }}>copy</p>
-                        )}
+                        {copied ? <p>Copied</p> : <p>Copy</p>}
                     </button>
                 </div>
             )}
+            <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+                <div className="sidebar-content">
+                    <button onClick={() => navigate('/')} className="sideBar-HomeButton" >Home</button>
+                    <h4 style={{fontFamily:"sans-serif", fontSize:'20px', margin:'20px', marginLeft:'4px'}}>Open</h4>
+                    <ul>
+                        {documentsList.map((docTitle, index) => <li key={index} className="documents-list" onClick={() => handleProjectSelect(docTitle)} > {docTitle} </li>)}
+                    </ul>
+                </div>
+            </div>
+        </div>
             <ReactQuill
                 ref={quillRef}
                 theme="snow"
@@ -231,8 +267,8 @@ export default function TextEditor() {
                     "video",
                 ]}
                 modules={modules}
-                value={content}  // Preserve current content
-                onChange={handleChange}  // Update content on change
+                value={content}
+                onChange={handleChange}
             />
             <div className="footer-container">
                 <div className="bottom-right-container">

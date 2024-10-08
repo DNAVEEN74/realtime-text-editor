@@ -47,10 +47,9 @@ export default function useFormHandlers() {
                             sessionId: sessionId,
                         }
                     );
-                    console.log(response)
+                    
                     const data = await response.data;
-                    console.log(data);
-    
+
                     if (data.message === "sessionId verified") {
                         setDocumentId(data.docId);
                         navigate("TextEditor");
