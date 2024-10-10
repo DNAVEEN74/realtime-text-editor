@@ -1,4 +1,4 @@
-import { Edit3, Users, Zap, MessageCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Edit3, Users, Zap, MessageCircle, ChevronDown, ChevronUp, User } from "lucide-react";
 import "../styles/home.css";
 import { useState } from "react";
 import NewDocumentOpener from "./newDoc";
@@ -20,6 +20,7 @@ export default function HomePage() {
   const [ projectsList, setProjectsList ] = useState([]);
   const { fetchProjects } = usePrevProjects();
   const setDocumentId = useSetRecoilState(documentIdState);
+  const [showLogOutCard, setShowLogOutCard] = useState(false);
 
   useTokenCheck();
 
@@ -41,6 +42,11 @@ export default function HomePage() {
     navigate('TextEditor');
   }
 
+  const handleLogOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+  }
+
   return (
     <div className="main-container">
       <header className="header">
@@ -59,9 +65,7 @@ export default function HomePage() {
               )}
             </button>
           )}
-          <a className="header-link" href="#">
-            About
-          </a>
+          {login && <div className="profile-logo" onClick={() => setShowLogOutCard((prev) => !prev)}><User className="user-logo"/></div>}
           {!login && 
           <button className="login-button" onClick={()=> navigate('login')} >
           <a href="/login" style={{ color: "white", textDecoration: "none" }}>
@@ -77,6 +81,13 @@ export default function HomePage() {
               {projectTitle}
             </button>
           ))}
+        </div>
+      )}
+      { showLogOutCard && (
+        <div className="logOut-card">
+          <button className="log-out" onClick={handleLogOut}>
+            Logout
+          </button>
         </div>
       )}
       <main className="main-content">

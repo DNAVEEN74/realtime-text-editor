@@ -1,13 +1,12 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import useFormHandlers from "../atoms and hooks/formHandler";
 import "../styles/newDoc.css"
-import { givenTitleSate, loginState } from "../atoms and hooks/formAtom";
+import { loginState } from "../atoms and hooks/formAtom";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 export default function NewDocumentOpener (){
     const { inputValue, error, handleInputChange, handleSubmit } = useFormHandlers();
-    const setGivenDocTitle = useSetRecoilState(givenTitleSate);
     const login = useRecoilValue(loginState);
     const navigate = useNavigate();
 

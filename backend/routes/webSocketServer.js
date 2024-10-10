@@ -10,6 +10,12 @@ wss.on('connection', async (ws, req) => {
     const docId = url.searchParams.get('docId');
 
     const document = await Document.findById(docId);
+    if(!document) {
+      ws.send(JSON.stringify({ type: 'error', message: 'Document not found' }));
+      ws.close();
+      return;
+    }
+    
     const content = document.docContent;
 
     ws.send(JSON.stringify({

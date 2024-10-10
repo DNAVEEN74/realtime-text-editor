@@ -1,12 +1,5 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-    documentIdState,
-    errorState,
-    generatedIdState,
-    givenIdState,
-    givenTitleSate,
-    inputValueState,
-} from "./formAtom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { documentIdState, errorState, givenIdState, givenTitleSate, inputValueState } from "./formAtom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -14,8 +7,8 @@ export default function useFormHandlers() {
     const [inputValue, setInputValue] = useRecoilState(inputValueState);
     const [error, setError] = useRecoilState(errorState);
     const [givenId, setGivenId] = useRecoilState(givenIdState);
-    const [givenTitle, setGivenTitle] = useRecoilState(givenTitleSate);
-    const [documentId, setDocumentId] = useRecoilState(documentIdState);
+    const setGivenTitle = useSetRecoilState(givenTitleSate);
+    const setDocumentId = useSetRecoilState(documentIdState);
     const navigate = useNavigate();
 
     const token = localStorage.getItem("token");

@@ -91,7 +91,6 @@ export default function useLoginHandler (){
             set(userIdState, response.userId);
             localStorage.setItem('token', response.token);
             localStorage.setItem('userId', response.userId);
-            console.log('Token and User ID:', response.token, response.userId);
             navigate('/');
             setLoginSate(true);
         }

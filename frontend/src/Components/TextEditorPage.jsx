@@ -24,6 +24,7 @@ export default function TextEditor() {
     const [documentsList, setDocumentsList] = useState([]);
     const { fetchProjects } = usePrevProjects();
     const navigate = useNavigate();
+    const [isSaved, setIsSaved] = useState(true);
 
     const modules = {
         toolbar: [
@@ -59,8 +60,6 @@ export default function TextEditor() {
     },[]);
 
     useEffect(() => {
-        if (socket || !documentId) return;
-
         const newSocket = new WebSocket(
             `ws://localhost:3000?docId=${documentId}`
         );
@@ -75,7 +74,7 @@ export default function TextEditor() {
             const quill = quillRef.current.getEditor();
 
             if (data.type === "initialContent") {
-                if (!quill.getContents().ops.length || !content.trim()) {
+                if (quill.getContents().ops.length || !content.trim()) {
                     setContent(data.content);
                 }
             } else if (data.type === "delta") {
@@ -88,22 +87,17 @@ export default function TextEditor() {
         };
 
         return () => {
-            if (newSocket) {
                 newSocket.close();
                 setSocket(null);
-            }
         };
     }, [documentId]);
 
     const handleChange = (content, delta, source, editor) => {
-        if (
-            source === "user" &&
-            socket &&
-            socket.readyState === WebSocket.OPEN
-        ) {
+        if ( source === "user" && socket && socket.readyState === WebSocket.OPEN ) {
             socket.send(JSON.stringify(delta));
         }
         setContent(content);
+        setIsSaved(false);
     };
 
     const handleUndo = () => {
@@ -140,13 +134,12 @@ export default function TextEditor() {
 
     const handleSave = async () => {
 
-        const response = await axios.put('http://localhost:3000/saveContent',{
+         const response = await axios.put('http://localhost:3000/saveContent',{
             docId: documentId,
             newContent: content
-        })
-
-        const data = await response.data;
-        console.log(data.message);
+        });
+        console.log(response.data);
+        setIsSaved(true);
     }
 
     const handleDownload = async () => {
@@ -180,6 +173,15 @@ export default function TextEditor() {
     };
     
     const handleProjectSelect = async (selectedDocument) => {
+        if(!isSaved){
+             const confirmSwitch = window.confirm("You have unsaved changes. Do you want to save before switching?");
+            if (confirmSwitch) {
+                await handleSave();
+            } else {
+                return;
+            }
+        }
+
         const userId = localStorage.getItem('userId');
 
         const response = await axios.get(`http://localhost:3000/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
@@ -191,10 +193,8 @@ export default function TextEditor() {
     return (
         <div className="mainPage">
             <div className="Nav">
-            <div
-                className="hamburger-menu"
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
+            <div className="hamburger-menu"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)} >
                 <div className="hamburger-icon">
                     <span></span>
                     <span></span>
@@ -241,9 +241,9 @@ export default function TextEditor() {
                 <div className="sidebar-content">
                     <button onClick={() => navigate('/')} className="sideBar-HomeButton" >Home</button>
                     <h4 style={{fontFamily:"sans-serif", fontSize:'20px', margin:'20px', marginLeft:'4px'}}>Open</h4>
-                    <ul>
+                    {login && <ul>
                         {documentsList.map((docTitle, index) => <li key={index} className="documents-list" onClick={() => handleProjectSelect(docTitle)} > {docTitle} </li>)}
-                    </ul>
+                    </ul> }
                 </div>
             </div>
         </div>

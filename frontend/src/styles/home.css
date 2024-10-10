@@ -498,7 +498,7 @@
   
   .appear-animation {
     opacity: 1;
-    max-height: 200px; /* Adjust based on content */
+    max-height: 200px;
   }
   
   .dropdown-menu {
@@ -536,4 +536,43 @@
   .arrow-icon {
     transition: transform 0.3s ease;
   }
-    
+
+  .profile-logo {
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-logo:hover {
+    background-color: #f3f4f6;
+  }
+
+  .user-logo {
+    margin: auto;
+  }
+
+  .logOut-card {
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0px;
+  }
+
+  .log-out {
+    color: red;
+    height: 25px;
+    width: 70px;
+    background-color: white;
+    border: 0.2px solid rgba(0, 0, 0, 0.285);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .log-out:hover {
+    background-color: #f3f4f6;
+  }
