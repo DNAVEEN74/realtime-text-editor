@@ -482,7 +482,7 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    width: 200px;
+    width: 250px;
     top: 50px;
     right: 70px;
     background-color: white;
@@ -491,8 +491,9 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 50;
     opacity: 0;
-    max-height: 0;
+    max-height: 0px;
     overflow: hidden;
+    overflow-y: scroll;
     transition: all 0.3s ease;
   }
   
@@ -502,6 +503,10 @@
   }
   
   .dropdown-menu {
+    display: flex;
+    justify-content: space-between;
+    flex-grow: 1;
+    align-items: center;
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
     color: #374151;
@@ -575,4 +580,20 @@
 
   .log-out:hover {
     background-color: #f3f4f6;
+  }
+
+  .delete-button {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    z-index: 1000;
+    transition: color 0.2s;
+  }
+
+  .delete-button:not(:last-child){
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .delete-button:hover {
+    color: red;
   }

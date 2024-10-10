@@ -1,4 +1,4 @@
-import { Edit3, Users, Zap, MessageCircle, ChevronDown, ChevronUp, User } from "lucide-react";
+import { Edit3, Users, Zap, MessageCircle, ChevronDown, ChevronUp, User, Trash2 } from "lucide-react";
 import "../styles/home.css";
 import { useState } from "react";
 import NewDocumentOpener from "./newDoc";
@@ -47,6 +47,22 @@ export default function HomePage() {
     localStorage.removeItem('userId');
   }
 
+  const handleDeleteDoc = async (docTitle) => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token')
+
+    const response = await axios.post('http://localhost:3000/docHandle/deleteDoc',{
+      userId: userId,
+      docTitle: docTitle
+    },{
+      headers : {
+        Authorization: token
+      }
+    })
+    const data = await response.data;
+    console.log(data.message);
+  }
+
   return (
     <div className="main-container">
       <header className="header">
@@ -77,9 +93,12 @@ export default function HomePage() {
       {showPrevProjects && (
         <div className="dropdown-container appear-animation">
           {projectsList.map((projectTitle, index) => (
-            <button key={index} className="dropdown-menu" onClick={() => handleProjectSelect(projectTitle)} >
-              {projectTitle}
-            </button>
+            <div key={index} style={{display:'flex', justifyContent:'space-between'}} >
+              <button className="dropdown-menu" onClick={() => handleProjectSelect(projectTitle)} >
+                {projectTitle}
+              </button>
+              <button className="delete-button" onClick={() => handleDeleteDoc(projectTitle)} ><Trash2 /></button>
+            </div>
           ))}
         </div>
       )}

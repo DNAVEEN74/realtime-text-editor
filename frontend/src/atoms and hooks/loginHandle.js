@@ -4,36 +4,35 @@ import { loginSchema, signUpSchema } from "../zod/loginSchema";
 import { fetchDataSelector, fetchParamsState, userIdState } from "./registerAtom";
 import { useNavigate } from "react-router-dom";
 
-
-export default function useLoginHandler (){
+export default function useLoginHandler() {
     const [userLoginInfo, setUserLoginInfo] = useRecoilState(userLoginState);
-    const [userSignUpInfo, setUserSignUpInfo]= useRecoilState(UserSignUpState);
+    const [userSignUpInfo, setUserSignUpInfo] = useRecoilState(UserSignUpState);
     const setError = useSetRecoilState(errorState);
     const signUpValue = useRecoilValue(signUpState);
     const navigate = useNavigate();
-    const setLoginSate = useSetRecoilState(loginState);
+    const setLoginState = useSetRecoilState(loginState);
 
     const handleInputChange = (e, actionType) => {
         const { value } = e.target;
 
-        if(signUpValue === false && actionType === 'email'){
+        if (signUpValue === false && actionType === 'email') {
             setUserLoginInfo((prevUserLoginInfo) => ({
-                ...prevUserLoginInfo, 
+                ...prevUserLoginInfo,
                 email: value
             }));
         }
 
-        if(signUpValue === true){
-            if(actionType === 'fullName'){
+        if (signUpValue === true) {
+            if (actionType === 'fullName') {
                 setUserSignUpInfo((prevUserSignUpInfo) => ({
                     ...prevUserSignUpInfo,
                     fullName: value
-                }))
-            }else if(actionType === 'email'){
-                setUserSignUpInfo((prevUserSignUpInfo) =>({
+                }));
+            } else if (actionType === 'email') {
+                setUserSignUpInfo((prevUserSignUpInfo) => ({
                     ...prevUserSignUpInfo,
                     email: value
-                }))
+                }));
             }
         }
         setError('');
@@ -41,34 +40,34 @@ export default function useLoginHandler (){
 
     const handlePasswordChange = (e) => {
         const { value } = e.target;
-        
-        if(signUpValue === false){
+
+        if (signUpValue === false) {
             setUserLoginInfo((prevUserInfo) => ({
                 ...prevUserInfo,
                 password: value
             }));
-        }else if(signUpValue === true){
-            setUserSignUpInfo((prevUserSignUpInfo) =>({
+        } else if (signUpValue === true) {
+            setUserSignUpInfo((prevUserSignUpInfo) => ({
                 ...prevUserSignUpInfo,
                 password: value
-            }))
+            }));
         }
 
-        setError('')
+        setError('');
     };
 
     const handleButtonClick = useRecoilCallback(({ snapshot, set }) => async (e) => {
         e.preventDefault();
         let result;
-    
+
         if (signUpValue === false) {
             result = loginSchema.safeParse(userLoginInfo);
             if (!result.success) {
                 return result.error.errors.forEach((err) => setError(err.message));
             }
-    
+
             set(fetchParamsState, {
-                route: 'login',
+                route: 'auth/login',
                 body: userLoginInfo,
             });
         } else {
@@ -76,26 +75,25 @@ export default function useLoginHandler (){
             if (!result.success) {
                 return result.error.errors.forEach((err) => setError(err.message));
             }
-    
+
             set(fetchParamsState, {
-                route: 'signUp',
+                route: 'auth/signup',
                 body: userSignUpInfo,
             });
         }
-    
+
         const fetchParams = await snapshot.getPromise(fetchParamsState);
         const response = await snapshot.getPromise(fetchDataSelector(fetchParams));
-    
+
         if (response.token) {
             set(tokenState, response.token);
             set(userIdState, response.userId);
             localStorage.setItem('token', response.token);
             localStorage.setItem('userId', response.userId);
             navigate('/');
-            setLoginSate(true);
+            setLoginState(true);
         }
     });
-    
 
     return {
         handleInputChange,

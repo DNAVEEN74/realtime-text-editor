@@ -10,6 +10,7 @@ import { saveAs } from 'file-saver';
 import { Save, Download, Users } from "lucide-react";
 import usePrevProjects from "../atoms and hooks/prevProjectsHook";
 import { useNavigate } from "react-router-dom";
+import useCheckSessionExpiry from "../atoms and hooks/checkSessionExpiry";
 
 export default function TextEditor() {
     const quillRef = useRef(null);
@@ -25,6 +26,8 @@ export default function TextEditor() {
     const { fetchProjects } = usePrevProjects();
     const navigate = useNavigate();
     const [isSaved, setIsSaved] = useState(true);
+     
+    useCheckSessionExpiry()
 
     const modules = {
         toolbar: [
@@ -48,6 +51,7 @@ export default function TextEditor() {
             maxStack: 100,
         },
     };
+
 
     useEffect(() => {
         const fetchDocumentsTitles = async () => {
@@ -110,6 +114,21 @@ export default function TextEditor() {
         editor.history.redo();
     };
 
+    useEffect(() => {
+        const fetchSessionId = async () => {
+            const response = await axios.post(
+                `http://localhost:3000/generate-sessionId?type=CreateSession`,
+                {
+                    docId: documentId,
+                }
+            );
+            const data = await response.data;
+            setGeneratedId(data.sessionId);
+        }
+
+        fetchSessionId();
+    },[documentId]);
+
     const handleCollaborate = async () => {
         if (generatedId) {
             setCollaborate(true);
@@ -117,19 +136,6 @@ export default function TextEditor() {
         }
 
         setCollaborate(true);
-
-        try {
-            const response = await axios.post(
-                `http://localhost:3000/generate-sessionId`,
-                {
-                    docId: documentId,
-                }
-            );
-            const data = await response.data;
-            setGeneratedId(data.sessionId);
-        } catch (error) {
-            console.error("Error generating session ID:", error);
-        }
     };
 
     const handleSave = async () => {

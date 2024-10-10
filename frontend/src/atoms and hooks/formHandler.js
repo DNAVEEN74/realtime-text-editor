@@ -35,7 +35,7 @@ export default function useFormHandlers() {
             const verifyGivenId = async (sessionId) => {
                 try {
                     const response = await axios.post(
-                        `http://localhost:3000/verify-sessionId`,
+                        `http://localhost:3000/generate-sessionId?type=verifySessionId`,
                         {
                             sessionId: sessionId,
                         }
@@ -59,20 +59,21 @@ export default function useFormHandlers() {
         }
     
         if (type === "newDocTitle") {
+            const userId = localStorage.getItem('userId');
             setGivenTitle(inputValue);
     
             const createNewDocument = async (title) => {
                 try {
                     const response = await axios.post(
-                        "http://localhost:3000/create-document",
+                        "http://localhost:3000/docHandle/createDoc",
                         {
-                            title: title,
-                        },
-                        {
-                            headers: {
-                                Authorization: `${token}`,
+                            userId: userId,
+                            docTitle: title
+                        },{
+                            headers : {
+                              Authorization: token
                             }
-                        }
+                          }
                     );
     
                     const data = response.data;
