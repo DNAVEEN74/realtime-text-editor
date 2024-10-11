@@ -7,7 +7,7 @@
 
 ## Demo
 
-(Add your demo link here)
+[Live link](https://collabeditfrontend.vercel.app/)
 
 ## Features
 
