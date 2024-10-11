@@ -35,7 +35,7 @@ export default function useFormHandlers() {
             const verifyGivenId = async (sessionId) => {
                 try {
                     const response = await axios.post(
-                        `http://localhost:3000/generate-sessionId?type=verifySessionId`,
+                        `https://collabedit-backend.onrender.com/generate-sessionId?type=verifySessionId`,
                         {
                             sessionId: sessionId,
                         }
@@ -65,7 +65,7 @@ export default function useFormHandlers() {
             const createNewDocument = async (title) => {
                 try {
                     const response = await axios.post(
-                        "http://localhost:3000/docHandle/createDoc",
+                        "https://collabedit-backend.onrender.com/docHandle/createDoc",
                         {
                             userId: userId,
                             docTitle: title

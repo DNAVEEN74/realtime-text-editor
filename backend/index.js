@@ -12,10 +12,23 @@ const connectDB = require('./db/dbConnect');
 const setUpWebSocketServer = require('./routes/webSocketServer');
 const docHandle = require('./routes/docHandle');
 
+const allowedOrigins = ['http://localhost:5173', 'https://collabeditfrontend.vercel.app'];
+
 const corsOptions = {
-  origin: '*',
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   exposedHeaders: ['Content-Disposition'],
 };
+
+app.options('*', cors(corsOptions));
 
 app.use(cors(corsOptions));
 app.use(express.json());

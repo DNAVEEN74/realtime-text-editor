@@ -35,7 +35,7 @@ export default function HomePage() {
   const handleProjectSelect = async ( selectedProjectTitle ) => {
     const userId = localStorage.getItem('userId');
 
-    const response = await axios.get(`http://localhost:3000/projectsHistory?type=retrieveDocumentId&docTitle=${selectedProjectTitle}&userId=${userId}`);
+    const response = await axios.get(`https://collabedit-backend.onrender.com/projectsHistory?type=retrieveDocumentId&docTitle=${selectedProjectTitle}&userId=${userId}`);
     const data = await response.data;
 
     setDocumentId(data.documentId);
@@ -51,7 +51,7 @@ export default function HomePage() {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token')
 
-    const response = await axios.post('http://localhost:3000/docHandle/deleteDoc',{
+    const response = await axios.post('https://collabedit-backend.onrender.com/docHandle/deleteDoc',{
       userId: userId,
       docTitle: docTitle
     },{

@@ -20,7 +20,7 @@ export const fetchDataSelector = selectorFamily({
         if (!route || !body) return null;
 
         try {
-            const response = await axios.post(`http://localhost:3000/${route}`, body);
+            const response = await axios.post(`https://collabedit-backend.onrender.com/${route}`, body);
             const data = response.data;
 
             return { token: data.token, userId: data.userId };

@@ -14,7 +14,7 @@ export default function useCheckSessionExpiry() {
         
         const intervalId = setInterval(async () => {
             try {
-                const response = await axios.post("http://localhost:3000/generate-sessionId?type=checkSessionIdExpiry", {
+                const response = await axios.post("https://collabedit-backend.onrender.com/generate-sessionId?type=checkSessionIdExpiry", {
                     docId: documentId
                 });
                 const data = response.data;

@@ -17,7 +17,7 @@ export default function useTokenCheck() {
 
     const askNewTokenForLogin = async () => {
       try {
-        const response = await axios.post('http://localhost:3000/verify-token',{token: retriveToken});
+        const response = await axios.post('https://collabedit-backend.onrender.com/verify-token',{token: retriveToken});
         const data = response.data;
 
         if (data.message === 'Invalid or expired token'|| data.message === 'Token is expired') {

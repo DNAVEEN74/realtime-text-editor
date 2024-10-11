@@ -65,7 +65,7 @@ export default function TextEditor() {
 
     useEffect(() => {
         const newSocket = new WebSocket(
-            `ws://localhost:3000?docId=${documentId}`
+            `ws://collabedit-backend.onrender.com?docId=${documentId}`
         );
         setSocket(newSocket);
 
@@ -117,7 +117,7 @@ export default function TextEditor() {
     useEffect(() => {
         const fetchSessionId = async () => {
             const response = await axios.post(
-                `http://localhost:3000/generate-sessionId?type=CreateSession`,
+                `https://collabedit-backend.onrender.com/generate-sessionId?type=CreateSession`,
                 {
                     docId: documentId,
                 }
@@ -140,7 +140,7 @@ export default function TextEditor() {
 
     const handleSave = async () => {
 
-         const response = await axios.put('http://localhost:3000/saveContent',{
+         const response = await axios.put('https://collabedit-backend.onrender.com/saveContent',{
             docId: documentId,
             newContent: content
         });
@@ -150,7 +150,7 @@ export default function TextEditor() {
 
     const handleDownload = async () => {
         try {
-            const response = await axios.post('http://localhost:3000/download-pdf', {
+            const response = await axios.post('https://collabedit-backend.onrender.com/download-pdf', {
                 docId: documentId,
                 content: content
             }, {
@@ -190,7 +190,7 @@ export default function TextEditor() {
 
         const userId = localStorage.getItem('userId');
 
-        const response = await axios.get(`http://localhost:3000/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
+        const response = await axios.get(`https://collabedit-backend.onrender.com/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
         const data = await response.data;
 
         setDocumentId(data.documentId);
