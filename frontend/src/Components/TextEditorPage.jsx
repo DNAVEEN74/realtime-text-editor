@@ -62,10 +62,10 @@ export default function TextEditor() {
         fetchDocumentsTitles();
         
     },[]);
-
+ 
     useEffect(() => {
         const newSocket = new WebSocket(
-            `ws://collabedit-backend.onrender.com?docId=${documentId}`
+            `wss://collabedit-backend.onrender.com?docId=${documentId}`
         );
         setSocket(newSocket);
 
@@ -209,21 +209,21 @@ export default function TextEditor() {
             </div>
             <div className="nav-button">
                 <button onClick={handleSave} className="Save-button">
-                    <Save className="button-icon" /> Save
+                    <Save className="button-icon" /> <span className="save-text" >Save</span>
                 </button>
                 {login && (
                     <button
                         className="collaborate-button"
                         onClick={handleCollaborate}
                     >
-                        <Users className="button-icon" /> Collaborate
+                        <Users className="button-icon" /> <span className="collaborate-text">Collaborate</span>
                     </button>
                 )}
                 <button
                     className="Download-button"
                     onClick={handleDownload}
                 >
-                    <Download className="button-icon" /> Download
+                    <Download className="button-icon" /> <span className="download-text" >Download</span>
                 </button>
             </div>
             {collaborate && (

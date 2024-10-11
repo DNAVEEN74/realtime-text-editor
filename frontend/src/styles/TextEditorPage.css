@@ -28,8 +28,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    row-gap: 6px;
     margin:auto;
-    height: 50px;
     color: black !important;
     background-color: transparent;
     backdrop-filter: blur(12px);
@@ -37,6 +37,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1;
+    flex-wrap: wrap;
 }
 
 .ql-toolbar button, 
@@ -286,4 +287,101 @@ body {
 
 .sidebar-content li:hover {
     background-color: #f1f1f1;
+}
+
+@media (max-width: 380px) {
+    .Nav {
+        height: 50px;
+    }
+
+    .Save-button, .collaborate-button, .Download-button {
+        width: 100%;
+        background-color: transparent;
+        position: relative;
+        z-index: 1000;
+    }
+
+
+    .Save-button:hover, .collaborate-button:hover, .Download-button:hover {
+        background-color: transparent;
+    }
+
+    .collaborate-text, .save-text, .download-text {
+        display: none;
+    }
+
+    .hamburger-menu {
+        margin-bottom: 8px;
+    }
+
+    .sidebar {
+        top: 51px !important;
+    }
+}
+
+@media (max-width: 320px) {
+    .Nav {
+        height: 50px;
+    }
+
+    .sidebar {
+        top: 51px !important;
+    }
+
+    .Save-button, .collaborate-button, .Download-button {
+        width: 100%;
+        background-color: transparent;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .Save-button:hover, .collaborate-button:hover, .Download-button:hover {
+        background-color: transparent;
+    }
+
+    .collaborate-text, .save-text, .download-text {
+        display: none;
+    }
+}
+
+@media (max-width: 414px) {
+    .Nav {
+        height: 50px;
+    }
+
+    .sidebar {
+        top: 51px !important;
+    }
+
+    .Save-button, .collaborate-button, .Download-button {
+        width: 100%;
+        background-color: transparent;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .Save-button:hover, .collaborate-button:hover, .Download-button:hover {
+        background-color: transparent;
+    }
+
+    .collaborate-text, .save-text, .download-text {
+        display: none;
+    }
+}
+
+@media (max-width: 500px) {
+    .Save-button, .collaborate-button, .Download-button {
+        width: 100%;
+        background-color: transparent;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .Save-button:hover, .collaborate-button:hover, .Download-button:hover {
+        background-color: transparent;
+    }
+
+    .collaborate-text, .save-text, .download-text {
+        display: none;
+    }
 }

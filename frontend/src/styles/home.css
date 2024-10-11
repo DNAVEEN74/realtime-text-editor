@@ -597,3 +597,24 @@
   .delete-button:hover {
     color: red;
   }
+
+  @media (max-width: 440px) {
+    .Document-Button {
+        width: 150px;
+        height: 40px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .Document-Button {
+        width: 130px;
+        font-size: 14px;
+    }
+  }
+
+  @media (max-width: 390px) {
+    .Document-Button {
+        width: 115px;
+        font-size: 12px;
+    }
+  }
