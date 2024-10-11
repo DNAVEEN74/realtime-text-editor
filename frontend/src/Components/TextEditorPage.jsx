@@ -65,7 +65,7 @@ export default function TextEditor() {
 
     useEffect(() => {
         const newSocket = new WebSocket(
-            `ws://collabedit-backend.onrender.com?docId=${documentId}`
+            `wss://collabedit-backend.onrender.com?docId=${documentId}`
         );
         setSocket(newSocket);
 
