@@ -116,6 +116,8 @@ export default function TextEditor() {
 
     useEffect(() => {
         const fetchSessionId = async () => {
+            if (login === false) return;
+
             const response = await axios.post(
                 `https://collabedit-backend.onrender.com/generate-sessionId?type=CreateSession`,
                 {

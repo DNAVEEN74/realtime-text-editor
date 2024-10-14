@@ -1,4 +1,4 @@
-import { Edit3, Users, Zap, MessageCircle, ChevronDown, ChevronUp, User, Trash2 } from "lucide-react";
+import { Edit3, Users, Zap, ArrowUpRight, ChevronDown, ChevronUp, User, Trash2, FileText, FileDown } from "lucide-react";
 import "../styles/home.css";
 import { useState } from "react";
 import NewDocumentOpener from "./newDoc";
@@ -181,17 +181,17 @@ export default function HomePage() {
                     "Collaborate with unlimited team members on the same document simultaneously.",
                 },
                 {
-                  icon: Edit3,
-                  title: "Version History",
+                  icon: FileDown,
+                  title: "PDF Export",
                   description:
-                    "Track changes and revert to previous versions with our comprehensive history feature.",
+                    "Easily download your documents as PDFs with a single click, preserving formatting and content.",
                 },
                 {
-                  icon: MessageCircle,
-                  title: "Real-Time Chatting",
+                  icon: FileText,
+                  title: "Unique Document Titles",
                   description:
-                    "Communicate with your team in real-time while editing, enhancing collaboration and productivity.",
-                },
+                    "Create and manage documents with unique titles for easy organization and access.",
+                }
               ].map((feature, index) => (
                 <div key={index} className="feature-card">
                   <feature.icon className="feature-icon" />
@@ -205,14 +205,10 @@ export default function HomePage() {
       </main>
       <footer className="footer">
         <p className="footer-text">© 2024 CollabEdit. All rights reserved.</p>
-        <nav className="footer-nav">
-          <a className="footer-link" href="#">
-            Terms of Service
-          </a>
-          <a className="footer-link" href="#">
-            Privacy
-          </a>
-        </nav>
+        <div className="fotter-link">
+        <ArrowUpRight />
+        <a href="https://github.com/DNAVEEN74/realtime-text-editor">GitHub</a>
+        </div>
       </footer>
     </div>
   );

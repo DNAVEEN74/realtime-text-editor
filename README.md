@@ -30,8 +30,6 @@
 
 - CRDT's (in development)
 
-- Role management for document ownership and contributors (in development)
-
 
 ## Technologies Used
 
