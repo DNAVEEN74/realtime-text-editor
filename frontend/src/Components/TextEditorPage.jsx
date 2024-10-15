@@ -77,7 +77,7 @@ export default function TextEditor() {
         const quill = quillRef.current.getEditor();
         new QuillBinding(ytext, quill);
 
-        return () => {
+        return async () => {
             provider.disconnect();
             ydoc.destroy();
         };
@@ -113,19 +113,6 @@ export default function TextEditor() {
         }
  
         fetchSessionId();
-    },[documentId]);
-
-    useEffect(() => {
-        const fetchDocumentContent = async () => {
-            const quill = quillRef.current.getEditor();
-            const response = await axios.post('https://collabedit-backend.onrender.com/saveContent/getContent',{
-                docId: documentId
-            });
-            const data = await response.data;
-            quill.updateContents(data.docContent);
-        }
-
-        fetchDocumentContent();
     },[documentId]);
 
     const handleCollaborate = async () => {
@@ -178,15 +165,6 @@ export default function TextEditor() {
     };
     
     const handleProjectSelect = async (selectedDocument) => {
-        if (!isSaved) {
-            const confirmSwitch = window.confirm("You have unsaved changes. Do you want to save before switching?");
-            if (confirmSwitch) {
-                await handleSave();
-                setIsSaved(true);
-            } else {
-                return;
-            }
-        }
     
         const userId = localStorage.getItem('userId');
         const response = await axios.get(`https://collabedit-backend.onrender.com/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
