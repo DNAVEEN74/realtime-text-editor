@@ -11,12 +11,14 @@ import { Save, Download, Users } from "lucide-react";
 import usePrevProjects from "../atoms and hooks/prevProjectsHook";
 import { useNavigate } from "react-router-dom";
 import useCheckSessionExpiry from "../atoms and hooks/checkSessionExpiry";
+import * as Y from 'yjs'
+import { QuillBinding } from 'y-quill'
+import { WebsocketProvider } from 'y-websocket'
 
 export default function TextEditor() {
     const quillRef = useRef(null);
     const [content, setContent] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [socket, setSocket] = useState(null);
     const [collaborate, setCollaborate] = useState(false);
     const [generatedId, setGeneratedId] = useRecoilState(generatedIdState);
     const login = useRecoilValue(loginState);
@@ -27,7 +29,7 @@ export default function TextEditor() {
     const navigate = useNavigate();
     const [isSaved, setIsSaved] = useState(true);
      
-    useCheckSessionExpiry()
+    useCheckSessionExpiry();
 
     const modules = {
         toolbar: [
@@ -52,7 +54,6 @@ export default function TextEditor() {
         },
     };
 
-
     useEffect(() => {
         const fetchDocumentsTitles = async () => {
             const titles = await fetchProjects();
@@ -64,44 +65,26 @@ export default function TextEditor() {
     },[]);
  
     useEffect(() => {
-        const newSocket = new WebSocket(
-            `wss://collabedit-backend.onrender.com?docId=${documentId}`
+        const ydoc = new Y.Doc();
+        const ytext = ydoc.getText("quill");
+        
+        const provider = new WebsocketProvider(
+            `wss://collabedit-backend.onrender.com`,
+            documentId,
+            ydoc
         );
-        setSocket(newSocket);
 
-        newSocket.onopen = () => {
-            console.log("WebSocket connection established");
-        };
-
-        newSocket.onmessage = (message) => {
-            const data = JSON.parse(message.data);
-            const quill = quillRef.current.getEditor();
-
-            if (data.type === "initialContent") {
-                if (quill.getContents().ops.length || !content.trim()) {
-                    setContent(data.content);
-                }
-            } else if (data.type === "delta") {
-                quill.updateContents(data.delta);
-            }
-        };
-
-        newSocket.onclose = () => {
-            console.log("WebSocket connection closed");
-        };
+        const quill = quillRef.current.getEditor();
+        new QuillBinding(ytext, quill);
 
         return () => {
-                newSocket.close();
-                setSocket(null);
+            provider.disconnect();
+            ydoc.destroy();
         };
     }, [documentId]);
 
     const handleChange = (content, delta, source, editor) => {
-        if ( source === "user" && socket && socket.readyState === WebSocket.OPEN ) {
-            socket.send(JSON.stringify(delta));
-        }
         setContent(content);
-        setIsSaved(false);
     };
 
     const handleUndo = () => {
@@ -127,9 +110,22 @@ export default function TextEditor() {
             const data = await response.data;
             setGeneratedId(data.sessionId);
         }
-
+ 
         fetchSessionId();
     },[documentId]);
+
+    useEffect(() => {
+        const fetchDocumentContent = async () => {
+            const quill = quillRef.current.getEditor();
+            const response = await axios.post('https://collabedit-backend.onrender.com/docHandle/getContent',{
+                docId: documentId
+            });
+            const data = await response.data;
+            quill.updateContents(data.docContent);
+        }
+
+        fetchDocumentContent();
+    },[documentId])
 
     const handleCollaborate = async () => {
         if (generatedId) {
@@ -181,22 +177,21 @@ export default function TextEditor() {
     };
     
     const handleProjectSelect = async (selectedDocument) => {
-        if(!isSaved){
-             const confirmSwitch = window.confirm("You have unsaved changes. Do you want to save before switching?");
+        if (!isSaved) {
+            const confirmSwitch = window.confirm("You have unsaved changes. Do you want to save before switching?");
             if (confirmSwitch) {
                 await handleSave();
+                setIsSaved(true);
             } else {
                 return;
             }
         }
-
+    
         const userId = localStorage.getItem('userId');
-
         const response = await axios.get(`https://collabedit-backend.onrender.com/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
         const data = await response.data;
-
         setDocumentId(data.documentId);
-    };
+    };    
 
     return (
         <div className="mainPage">

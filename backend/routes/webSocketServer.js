@@ -1,50 +1,29 @@
 const webSocket = require('ws');
 const Document = require('../db/documentSchema');
+const { setupWSConnection } = require('y-websocket/bin/utils');
 
 function setUpWebSocketServer(server){
     const wss = new webSocket.Server({server})
 
-wss.on('connection', async (ws, req) => {
-    console.log('client connected');
-    const url = new URL(req.url,`http://${req.headers.host}`);
-    const docId = url.searchParams.get('docId');
-
-    const document = await Document.findById(docId);
-    if(!document) {
-      ws.send(JSON.stringify({ type: 'error', message: 'Document not found' }));
-      ws.close();
-      return;
-    }
-    
-    const content = document.docContent;
-
-    ws.send(JSON.stringify({
-      type: 'initialContent',
-      content: content
-    }));
+    wss.on('connection', async (ws, req) => {
+      const docId = req.url.slice(1);
   
-    ws.on('message', (message) => {
       try {
-        const delta = JSON.parse(message);
-        wss.clients.forEach((client) => {
-          if (client !== ws && client.readyState === webSocket.OPEN) {
-            client.send(JSON.stringify({
-              type: 'delta',
-              delta: delta
-            }));
+          const document = await Document.findById(docId);
+          if (!document) {
+              ws.send(JSON.stringify({ type: 'error', message: 'Document not found' }));
+              ws.close();
+              return;
           }
-        });
-      } catch (error) {
-        console.error('Failed to parse WebSocket message', error);
-      }
-    });
   
-    ws.on('close', async () => {
-      console.log('client disconnected');
-      document.sessionId = '';
-      await document.save();
-    });
-  });
+          setupWSConnection(ws, req, { docId });
+  
+      } catch (error) {
+          console.error("Error setting up WebSocket connection:", error);
+          ws.send(JSON.stringify({ type: 'error', message: 'Server error' }));
+          ws.close();
+      }
+  });  
 }
 
 module.exports = setUpWebSocketServer ;
