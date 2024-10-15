@@ -459,7 +459,8 @@
     color: black;
 }
 
-.footer-link:hover, a:hover {
+
+.fotter-link, a:hover {
     text-decoration: underline;
     color: blue;
 }
