@@ -84,6 +84,7 @@ export default function TextEditor() {
     }, [documentId]);
 
     const handleChange = (content, delta, source, editor) => {
+        setIsSaved(false);
         setContent(content);
     };
 

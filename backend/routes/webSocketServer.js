@@ -1,6 +1,9 @@
 const webSocket = require('ws');
 const Document = require('../db/documentSchema');
 const { setupWSConnection } = require('y-websocket/bin/utils');
+const Y = require('yjs');
+
+const yDocuments = new Map();
 
 function setUpWebSocketServer(server){
     const wss = new webSocket.Server({server})
@@ -15,8 +18,22 @@ function setUpWebSocketServer(server){
               ws.close();
               return;
           }
-  
-          setupWSConnection(ws, req, { docId });
+
+          let ydoc = yDocuments.get(docId);
+            if (!ydoc) {
+                ydoc = new Y.Doc();
+                yDocuments.set(docId, ydoc);
+            }
+
+            setupWSConnection(ws, req, { docId, ydoc });
+
+            ws.on('close', async () => {
+              ydoc.destroy();
+              yDocuments.delete(docId);
+
+              document.sessionId = '';
+              await document.save();
+          });
   
       } catch (error) {
           console.error("Error setting up WebSocket connection:", error);
