@@ -36,17 +36,6 @@ router.post('/:action', jwtCheck, async (req, res) => {
                 }
 
                 return res.status(200).json({ message: 'Document deleted successfully' });
-            }else if(action === 'getContent'){
-                const { docId } = req.body;
-
-                const document = await Document.findById(docId);
-
-                if (!document) {
-                    return res.status(404).json({ message: 'Document not found' });
-                }
-
-                const content = document.docContent;
-                res.status(200).json({docContent: content})
             }
         }catch (error) {
                 return res.status(500).json({ message: 'Server error' });

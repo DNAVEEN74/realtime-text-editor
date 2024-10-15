@@ -117,7 +117,7 @@ export default function TextEditor() {
     useEffect(() => {
         const fetchDocumentContent = async () => {
             const quill = quillRef.current.getEditor();
-            const response = await axios.post('https://collabedit-backend.onrender.com/docHandle/getContent',{
+            const response = await axios.post('https://collabedit-backend.onrender.com/saveContent/getContent',{
                 docId: documentId
             });
             const data = await response.data;
@@ -125,7 +125,7 @@ export default function TextEditor() {
         }
 
         fetchDocumentContent();
-    },[documentId])
+    },[documentId]);
 
     const handleCollaborate = async () => {
         if (generatedId) {
@@ -138,7 +138,7 @@ export default function TextEditor() {
 
     const handleSave = async () => {
 
-         const response = await axios.put('https://collabedit-backend.onrender.com/saveContent',{
+         const response = await axios.put('https://collabedit-backend.onrender.com/saveContent/saveDoc',{
             docId: documentId,
             newContent: content
         });
