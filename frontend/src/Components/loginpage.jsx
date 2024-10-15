@@ -49,7 +49,7 @@ function LoginForm () {
                     <button 
                     type="submit" 
                     className="submit-button" onClick={handleButtonClick}>login</button>
-                    <p className="bottom-text" >Don't have an account? <a href="#" onClick={() => { setSignUpState(true) }} >Signup</a></p>
+                    <p className="bottom-text" >Don't have an account? <a href="#" onClick={() => { setSignUpState(true) }} style={{color:'blue'}} >Signup</a></p>
                 </form>
             </div>
         </div>

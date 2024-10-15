@@ -205,7 +205,7 @@ export default function HomePage() {
       </main>
       <footer className="footer">
         <p className="footer-text">© 2024 CollabEdit. All rights reserved.</p>
-        <div className="fotter-link">
+        <div className="footer-link">
         <ArrowUpRight />
         <a href="https://github.com/DNAVEEN74/realtime-text-editor">GitHub</a>
         </div>

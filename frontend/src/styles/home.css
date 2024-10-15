@@ -55,17 +55,9 @@
     }
 }
 
-.header-link {
-    font-size: 0.995rem;
-    font-weight: 550;
+.header-logo:hover {
     text-decoration: none;
-    text-underline-offset: 0.25em;
     color: black;
-    font-family: sans-serif;
-}
-
-.header-link:hover {
-    text-decoration: underline;
 }
 
 .login-button {
@@ -456,18 +448,18 @@
     margin: auto;
 }
 
-.fotter-link {
+.footer-link {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.form-link, a {
+.footer-link, a {
     text-decoration: none;
     color: black;
 }
 
-.form-link, a:hover {
+.footer-link:hover, a:hover {
     text-decoration: underline;
     color: blue;
 }
@@ -531,6 +523,10 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .Document-Button:hover {
+    box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.192) ;
   }
   
   .arrow-icon {
