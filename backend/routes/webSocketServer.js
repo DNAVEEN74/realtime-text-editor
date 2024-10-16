@@ -10,9 +10,11 @@ function setUpWebSocketServer(server){
 
     wss.on('connection', async (ws, req) => {
       const docId = req.url.slice(1);
+      console.log('connected');
   
       try {
           const document = await Document.findById(docId);
+
           if (!document) {
               ws.send(JSON.stringify({ type: 'error', message: 'Document not found' }));
               ws.close();
@@ -20,19 +22,30 @@ function setUpWebSocketServer(server){
           }
 
           let ydoc = yDocuments.get(docId);
+
             if (!ydoc) {
                 ydoc = new Y.Doc();
+                const savedContent = document.docContent;
+
+                if(savedContent){
+                    Y.applyUpdate(ydoc, savedState);
+                }
+                
                 yDocuments.set(docId, ydoc);
             }
 
             setupWSConnection(ws, req, { docId, ydoc });
 
             ws.on('close', async () => {
-              ydoc.destroy();
-              yDocuments.delete(docId);
+                const updatedContent = Y.encodeStateAsUpdate(ydoc);
+                document.docContent = updatedContent;
+                document.sessionId = '';
+                await document.save();
 
-              document.sessionId = '';
-              await document.save();
+                ydoc.destroy();
+                yDocuments.delete(docId);
+
+                console.log('disconnected');
           });
   
       } catch (error) {
