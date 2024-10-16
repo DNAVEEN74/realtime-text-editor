@@ -28,7 +28,7 @@ function setUpWebSocketServer(server){
                 const savedContent = document.docContent;
 
                 if(savedContent){
-                    Y.applyUpdate(ydoc, savedState);
+                    Y.applyUpdate(ydoc, savedContent);
                 }
                 
                 yDocuments.set(docId, ydoc);

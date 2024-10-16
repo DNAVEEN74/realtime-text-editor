@@ -28,6 +28,7 @@ export default function TextEditor() {
     const { fetchProjects } = usePrevProjects();
     const navigate = useNavigate();
     const [isSaved, setIsSaved] = useState(true);
+     
     useCheckSessionExpiry();
 
     const modules = {
@@ -68,7 +69,7 @@ export default function TextEditor() {
         const ytext = ydoc.getText("quill");
         
         const provider = new WebsocketProvider(
-            socketUrl,
+            `wss://collabedit-backend.onrender.com`,
             documentId,
             ydoc
         );
