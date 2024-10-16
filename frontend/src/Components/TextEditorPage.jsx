@@ -65,6 +65,18 @@ export default function TextEditor() {
     },[]);
  
     useEffect(() => {
+        const fetchContent = async () => {
+            const response = await axios.put('https://collabedit-backend.onrender.com/saveContent/getContent',{
+                docId: documentId
+            });
+            const data = await response.data;
+            const delta = quill.clipboard.convert(data.docContent);
+            quill.setContents(delta);
+            setIsSaved(true);
+        }
+
+        fetchContent();
+
         const ydoc = new Y.Doc();
         const ytext = ydoc.getText("quill");
         
@@ -77,7 +89,7 @@ export default function TextEditor() {
         const quill = quillRef.current.getEditor();
         new QuillBinding(ytext, quill);
 
-        return async () => {
+        return () => {
             provider.disconnect();
             ydoc.destroy();
         };
@@ -125,7 +137,6 @@ export default function TextEditor() {
     };
 
     const handleSave = async () => {
-
          const response = await axios.put('https://collabedit-backend.onrender.com/saveContent/saveDoc',{
             docId: documentId,
             newContent: content
@@ -165,12 +176,36 @@ export default function TextEditor() {
     };
     
     const handleProjectSelect = async (selectedDocument) => {
-    
+        if(isSaved === false){
+            const confirm = window.confirm('You have unsaved changes. Do you want to save them before leaving?');
+
+            if(confirm){
+                await handleSave();
+            }else {
+                return;
+            }
+        }
+
         const userId = localStorage.getItem('userId');
         const response = await axios.get(`https://collabedit-backend.onrender.com/projectsHistory?type=retrieveDocumentId&docTitle=${selectedDocument}&userId=${userId}`);
         const data = await response.data;
         setDocumentId(data.documentId);
-    };    
+    };
+
+    const handleNavigate = async () => {
+        if(isSaved === false){
+            const confirm = window.confirm('You have unsaved changes. Do you want to save them before leaving?');
+
+            if(confirm){
+                await handleSave();
+                navigate('/');
+            }else {
+                return;
+            }
+        }else if (isSaved === true){
+            navigate('/');
+        }
+    }
 
     return (
         <div className="mainPage">
@@ -221,7 +256,7 @@ export default function TextEditor() {
             )}
             <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
                 <div className="sidebar-content">
-                    <button onClick={() => navigate('/')} className="sideBar-HomeButton" >Home</button>
+                    <button onClick={() => handleNavigate()} className="sideBar-HomeButton" >Home</button>
                     <h4 style={{fontFamily:"sans-serif", fontSize:'20px', margin:'20px', marginLeft:'4px'}}>Open</h4>
                     {login && <ul>
                         {documentsList.map((docTitle, index) => <li key={index} className="documents-list" onClick={() => handleProjectSelect(docTitle)} > {docTitle} </li>)}

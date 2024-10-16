@@ -1,9 +1,6 @@
 const webSocket = require('ws');
 const Document = require('../db/documentSchema');
 const { setupWSConnection } = require('y-websocket/bin/utils');
-const Y = require('yjs');
-
-const yDocuments = new Map();
 
 function setUpWebSocketServer(server) {
     const wss = new webSocket.Server({ server });
@@ -21,32 +18,11 @@ function setUpWebSocketServer(server) {
                 return;
             }
 
-            let ydoc = yDocuments.get(docId);
-
-            if (!ydoc) {
-                ydoc = new Y.Doc();
-                const savedContent = document.docContent;
-
-                if (savedContent) {
-                    Y.applyUpdate(ydoc, savedContent);
-                }
-                yDocuments.set(docId, ydoc);
-            }
-
-            setupWSConnection(ws, req, { docId, ydoc });
+            setupWSConnection(ws, req, docId);
 
             ws.on('close', async () => {
-                if (wss.clients.size === 0 || ![...wss.clients].some(client => client.readyState === webSocket.OPEN)) {
                     document.sessionId = '';
                     await document.save();
-
-                    ydoc.destroy();
-                    yDocuments.delete(docId);
-
-                    console.log(`Document ${docId} disconnected and memory cleared.`);
-                } else {
-                    console.log(`A client disconnected from document ${docId}, but there are still active connections.`);
-                }
             });
 
         } catch (error) {
